@@ -1,6 +1,6 @@
 import { useState, type FC, type Dispatch, type SetStateAction } from "react";
 import { ArrowUp } from "../icons/ArrowUp";
-import { CallFilter } from "../../App";
+import type { CallFilter } from "../../App";
 
 type CallTypeSelectProps = {
   currentFilter: CallFilter | null;

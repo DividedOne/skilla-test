@@ -1,11 +1,11 @@
 import { type FC } from "react";
 import { tableHeadings } from "./constants";
 import { CallTypeIcon } from "../icons/CallTypeIcon";
-import { MappedData } from "../../App";
+import { Calls } from "../../App";
 import { CallMarkBadge } from "./CallMarkBadge";
 
 type CallsTableProps = {
-  calls: MappedData;
+  calls: Calls;
 };
 
 export const CallsTable: FC<CallsTableProps> = ({ calls }) => {

@@ -3,151 +3,90 @@ import { CallTypeSelect } from "./components/controls/CallTypeSelect";
 import { DateSelect } from "./components/controls/DateSelect";
 import { CallsTable } from "./components/table/CallsTable";
 import { API_URL, token } from "./data/constants";
-
-export interface Root {
-  total_rows: number;
-  results: Result[];
-}
-
-export interface Result {
-  id: number;
-  partnership_id: string;
-  partner_data: PartnerData;
-  date: string;
-  date_notime: string;
-  time: number;
-  from_number: string;
-  from_extension: string;
-  to_number: string;
-  to_extension: string;
-  is_skilla: number;
-  status: string;
-  record: string;
-  line_number: string;
-  line_name: string;
-  in_out: number;
-  from_site: number;
-  source: string;
-  errors: any[];
-  disconnect_reason: string;
-  results: any[];
-  stages: any[];
-  abuse: Abuse;
-  contact_name: string;
-  contact_company: string;
-  person_id: number;
-  person_name: string;
-  person_surname: string;
-  person_avatar: string;
-}
-
-export interface PartnerData {
-  id: string;
-  name: string;
-  phone: string;
-}
-
-export interface Abuse {
-  date: string;
-  person_name: string;
-  message: string;
-  support_read_status: number;
-  support_answer_status: number;
-  answers: Answer[];
-}
-
-export interface Answer {
-  message: string;
-  from_support: number;
-  support_read_status: number;
-  person_read_status: number;
-}
-
-export type CallInOut = "in" | "out";
-
-export type CallStatus = "answered" | "missed";
+import type { ApiResponse, Calls } from "./data/types";
+import {
+  appendMark,
+  formatPhoneNumber,
+  getFilteredCalls,
+  getHoursAndMinutes,
+  getTimeFromSeconds,
+} from "./utils/helpers";
+import { startOfMonth, startOfWeek, startOfYear, subDays } from "date-fns";
 
 export type CallFilter = "Входящие" | "Исходящие" | null;
 
-export type MappedData = {
-  id: number;
-  callInOut: CallInOut;
-  status: CallStatus;
-  date: string;
-  userAvatar: string;
-  number: string;
-  source: string;
-  mark: string;
-  duration: string;
-}[];
+export type Dates = { startDate: string; endDate: string };
 
-function getHoursAndMinutes(date: string) {
-  const dateObject = new Date(date);
-  const hours = dateObject.getHours();
-  const minutes = dateObject.getMinutes();
+type Period = "3 дня" | "Неделя" | "Месяц" | "Год";
 
-  const formattedHours = hours < 10 ? `0${hours}` : hours;
-  const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+function getDates(period: Period): Dates {
+  const endDate = new Date();
+  let startDate: Date;
 
-  return `${formattedHours}:${formattedMinutes}`;
-}
+  switch (period) {
+    case "Неделя":
+      startDate = startOfWeek(endDate, { weekStartsOn: 1 });
+      break;
+    case "Месяц":
+      startDate = startOfMonth(endDate);
+      break;
+    case "Год":
+      startDate = startOfYear(endDate);
+      break;
+    default: {
+      startDate = subDays(endDate, 2);
+    }
+  }
 
-function getTimeFromSeconds(seconds: number) {
-  if (seconds === 0) return "";
+  const correctStartMonth =
+    startDate.getMonth() + 1 < 10
+      ? `0${startDate.getMonth() + 1}`
+      : `${startDate.getMonth() + 1}`;
 
-  const minutes = Math.floor(seconds / 60);
-  const secondsLeft = seconds % 60;
+  const correctEndMonth =
+    endDate.getMonth() + 1 < 10
+      ? `0${endDate.getMonth() + 1}`
+      : `${endDate.getMonth() + 1}`;
 
-  const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-  const formattedSeconds = secondsLeft < 10 ? `0${secondsLeft}` : secondsLeft;
+  const correctEndDay =
+    endDate.getDate() < 10 ? `0${endDate.getDate()}` : `${endDate.getDate()}`;
+  const correctStartDay =
+    startDate.getDate() < 10
+      ? `0${startDate.getDate()}`
+      : `${startDate.getDate()}`;
 
-  return `${formattedMinutes}:${formattedSeconds}`;
-}
+  const startDateString = `${startDate.getFullYear()}-${correctStartMonth}-${correctStartDay}`;
+  const endDateString = `${endDate.getFullYear()}-${correctEndMonth}-${correctEndDay}`;
 
-function formatPhoneNumber(phoneNumber: string) {
-  if (phoneNumber.length !== 11) return phoneNumber;
-
-  const digits = phoneNumber.split("");
-  return `+${digits[0]} (${digits[1]}${digits[2]}${digits[3]}) ${digits[4]}${digits[5]}${digits[6]}-${digits[7]}${digits[8]}-${digits[9]}${digits[10]}`;
-}
-
-function appendMark() {
-  const marks = ["", "Скрипт не использован", "Плохо", "Хорошо", "Отлично"];
-
-  return marks[Math.floor(Math.random() * marks.length)];
-}
-
-function getFilteredCalls(
-  calls: MappedData | undefined,
-  filter: CallFilter | null,
-) {
-  if (!calls) return;
-
-  if (!filter) return calls;
-
-  if (filter === "Входящие")
-    return calls.filter((call) => call.callInOut === "in");
-
-  return calls.filter((call) => call.callInOut === "out");
+  return {
+    startDate: startDateString,
+    endDate: endDateString,
+  };
 }
 
 function App() {
-  const [data, setData] = useState<MappedData>();
+  const [calls, setCalls] = useState<Calls>();
   const [currentFilter, setCurrentFilter] = useState<CallFilter | null>(null);
+  const [period, setPeriod] = useState<Period>("3 дня");
 
   useEffect(() => {
+    const { startDate, endDate } = getDates(period);
+
     async function fetchCalls() {
-      const apiResponse = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const apiResponse = await fetch(
+        `${API_URL}?date_start=${startDate}&date_end=${endDate}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
       const data = await apiResponse.json();
-      return data as Root;
+      return data as ApiResponse;
     }
     fetchCalls().then((data) => {
-      const mappedData: MappedData = data.results.map((call) => ({
+      const calls: Calls = data.results.map((call) => ({
         id: call.id,
         callInOut: call.in_out === 1 ? "in" : "out",
         status: call.status === "Дозвонился" ? "answered" : "missed",
@@ -158,19 +97,21 @@ function App() {
         mark: appendMark(),
         duration: getTimeFromSeconds(call.time),
       }));
-      setData(mappedData);
+      setCalls(calls);
     });
   }, []);
 
-  const filteredCalls = getFilteredCalls(data, currentFilter);
+  const filteredCalls = getFilteredCalls(calls, currentFilter);
 
   return (
-    <main className="font-sf flex min-h-screen flex-col gap-[16px] bg-[#F1F4F9] px-60 pb-[120px] pt-20">
+    <main className="flex min-h-screen flex-col gap-[16px] bg-[#F1F4F9] px-60 pb-[120px] pt-20 font-sf">
       <div className="flex justify-between">
-        <CallTypeSelect
-          currentFilter={currentFilter}
-          setCurrentFilter={setCurrentFilter}
-        />
+        <div>
+          <CallTypeSelect
+            currentFilter={currentFilter}
+            setCurrentFilter={setCurrentFilter}
+          />
+        </div>
         <DateSelect />
       </div>
       <Suspense fallback={<div>Loading...</div>}>

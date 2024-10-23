@@ -1,10 +1,11 @@
-import { type FC } from "react";
+import { useState, type FC } from "react";
 import { ArrowUp } from "../icons/ArrowUp";
 import { Calendar } from "../icons/Calendar";
 
 type DateSelectProps = {};
 
 export const DateSelect: FC<DateSelectProps> = ({}) => {
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <div className="flex max-w-[135px] items-center justify-center gap-3">
       <button className="group -rotate-90">
