@@ -3,6 +3,9 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        sf: "'SF Pro Display', sans-serif",
+      },
       boxShadow: {
         default: "0 4px 5px #E9EDF3",
         dropdown: "0 4px 20px #00000014",
@@ -20,8 +23,7 @@ export default {
         "accent-red": "#EA1A4F",
       },
       gridTemplateColumns: {
-        table:
-          "minmax(54px, 1fr), minmax(88px, 1fr), minmax(129px, 1fr), minmax(325px, 1fr), minmax(214px, 1fr), minmax(461px, 1fr), minmax(110px, 1fr)",
+        table: "50px, 84px, 125px, 2fr, 1fr, 1fr, 2fr",
       },
     },
   },

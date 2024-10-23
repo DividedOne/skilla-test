@@ -1,14 +1,17 @@
-import { useState, type FC } from "react";
+import { useState, type FC, type Dispatch, type SetStateAction } from "react";
 import { ArrowUp } from "../icons/ArrowUp";
+import { CallFilter } from "../../App";
 
-type CallTypeSelectProps = {};
+type CallTypeSelectProps = {
+  currentFilter: CallFilter | null;
+  setCurrentFilter: Dispatch<SetStateAction<CallFilter | null>>;
+};
 
-type CallType = "Все типы" | "Входящие" | "Исходящие";
-
-export const CallTypeSelect: FC<CallTypeSelectProps> = ({}) => {
+export const CallTypeSelect: FC<CallTypeSelectProps> = ({
+  currentFilter,
+  setCurrentFilter,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedCallType, setSelectedCallType] =
-    useState<CallType>("Все типы");
 
   return (
     <div
@@ -16,7 +19,7 @@ export const CallTypeSelect: FC<CallTypeSelectProps> = ({}) => {
       onClick={() => setIsOpen(!isOpen)}
       className="relative inline-flex min-w-[130px] items-center gap-1 rounded-lg bg-transparent text-sm/[14px] text-secondary"
     >
-      {selectedCallType}
+      {currentFilter ? currentFilter : "Все типы"}
       <div
         className={`${isOpen ? "" : "rotate-180"} transition-all duration-150`}
       >
@@ -29,7 +32,7 @@ export const CallTypeSelect: FC<CallTypeSelectProps> = ({}) => {
           <button
             className="w-full px-3 py-[7px] text-left text-xs/[18px] text-muted transition-colors duration-150 hover:bg-hover focus-visible:bg-hover"
             onClick={() => {
-              setSelectedCallType("Все типы");
+              setCurrentFilter(null);
               setIsOpen(false);
             }}
           >
@@ -38,7 +41,7 @@ export const CallTypeSelect: FC<CallTypeSelectProps> = ({}) => {
           <button
             className="w-full px-3 py-[7px] text-left text-xs/[18px] text-muted transition-colors duration-150 hover:bg-hover focus-visible:bg-hover"
             onClick={() => {
-              setSelectedCallType("Входящие");
+              setCurrentFilter("Входящие");
               setIsOpen(false);
             }}
           >
@@ -47,7 +50,7 @@ export const CallTypeSelect: FC<CallTypeSelectProps> = ({}) => {
           <button
             className="w-full px-3 py-[7px] text-left text-xs/[18px] text-muted transition-colors duration-150 hover:bg-hover focus-visible:bg-hover"
             onClick={() => {
-              setSelectedCallType("Исходящие");
+              setCurrentFilter("Исходящие");
               setIsOpen(false);
             }}
           >
