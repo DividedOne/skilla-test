@@ -19,6 +19,10 @@ export default {
         "accent-green": "#28A879",
         "accent-red": "#EA1A4F",
       },
+      gridTemplateColumns: {
+        table:
+          "minmax(54px, 1fr), minmax(88px, 1fr), minmax(129px, 1fr), minmax(325px, 1fr), minmax(214px, 1fr), minmax(461px, 1fr), minmax(110px, 1fr)",
+      },
     },
   },
   plugins: [],

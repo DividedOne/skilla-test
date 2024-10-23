@@ -25,9 +25,9 @@ export const CallTypeSelect: FC<CallTypeSelectProps> = ({}) => {
         />
       </div>
       {isOpen && (
-        <div className="shadow-dropdown absolute left-0 top-[calc(100%+12px)] rounded-lg bg-white">
+        <div className="absolute left-0 top-[calc(100%+12px)] rounded-lg bg-white shadow-dropdown">
           <button
-            className="hover:bg-hover focus-visible:bg-hover text-muted w-full px-3 py-[7px] text-left text-xs/[18px] transition-colors duration-150"
+            className="w-full px-3 py-[7px] text-left text-xs/[18px] text-muted transition-colors duration-150 hover:bg-hover focus-visible:bg-hover"
             onClick={() => {
               setSelectedCallType("Все типы");
               setIsOpen(false);
@@ -36,7 +36,7 @@ export const CallTypeSelect: FC<CallTypeSelectProps> = ({}) => {
             Все типы
           </button>
           <button
-            className="hover:bg-hover focus-visible:bg-hover text-muted w-full px-3 py-[7px] text-left text-xs/[18px] transition-colors duration-150"
+            className="w-full px-3 py-[7px] text-left text-xs/[18px] text-muted transition-colors duration-150 hover:bg-hover focus-visible:bg-hover"
             onClick={() => {
               setSelectedCallType("Входящие");
               setIsOpen(false);
@@ -45,7 +45,7 @@ export const CallTypeSelect: FC<CallTypeSelectProps> = ({}) => {
             Входящие
           </button>
           <button
-            className="hover:bg-hover focus-visible:bg-hover text-muted w-full px-3 py-[7px] text-left text-xs/[18px] transition-colors duration-150"
+            className="w-full px-3 py-[7px] text-left text-xs/[18px] text-muted transition-colors duration-150 hover:bg-hover focus-visible:bg-hover"
             onClick={() => {
               setSelectedCallType("Исходящие");
               setIsOpen(false);

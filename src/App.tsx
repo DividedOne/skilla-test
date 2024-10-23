@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { CallTypeSelect } from "./components/controls/CallTypeSelect";
 import { DateSelect } from "./components/controls/DateSelect";
+import { CallsTable } from "./components/table/CallsTable";
 
 export interface Root {
   total_rows: number;
@@ -61,6 +62,79 @@ export interface Answer {
   person_read_status: number;
 }
 
+const mockCalls = [
+  {
+    id: "1",
+    callType: "inc",
+    time: "10:00",
+    employeeAvatar: "",
+    fromUser: "alo",
+    source: "call",
+    mark: "mark",
+    duration: "10",
+  },
+  {
+    id: "2",
+    callType: "inc",
+    time: "10:00",
+    employeeAvatar: "",
+    fromUser: "alo",
+    source: "call",
+    mark: "mark",
+    duration: "10",
+  },
+  {
+    id: "3",
+    callType: "inc",
+    time: "10:00",
+    employeeAvatar: "",
+    fromUser: "alo",
+    source: "call",
+    mark: "mark",
+    duration: "10",
+  },
+  {
+    id: "4",
+    callType: "inc",
+    time: "10:00",
+    employeeAvatar: "",
+    fromUser: "alo",
+    source: "call",
+    mark: "mark",
+    duration: "10",
+  },
+  {
+    id: "5",
+    callType: "inc",
+    time: "10:00",
+    employeeAvatar: "",
+    fromUser: "alo",
+    source: "call",
+    mark: "mark",
+    duration: "10",
+  },
+  {
+    id: "6",
+    callType: "inc",
+    time: "10:00",
+    employeeAvatar: "",
+    fromUser: "alo",
+    source: "call",
+    mark: "mark",
+    duration: "10",
+  },
+  {
+    id: "7",
+    callType: "inc",
+    time: "10:00",
+    employeeAvatar: "",
+    fromUser: "alo",
+    source: "call",
+    mark: "mark",
+    duration: "10",
+  },
+];
+
 function App() {
   const [data, setData] = useState<Root>();
 
@@ -81,13 +155,13 @@ function App() {
   // }, []);
 
   return (
-    <main className="flex min-h-screen flex-col gap-[10px] bg-[#F1F4F9] px-60 pb-[120px] pt-20">
+    <main className="flex min-h-screen flex-col gap-[16px] bg-[#F1F4F9] px-60 pb-[120px] pt-20">
       <div className="flex justify-between">
         <CallTypeSelect />
         <DateSelect />
       </div>
-      <div className="h-full w-full rounded-lg bg-white pt-5 shadow-default">
-        {data?.results.map((r) => <div key={r.id}>{r.date}</div>)}
+      <div className="h-full w-full rounded-lg bg-white shadow-default">
+        <CallsTable calls={mockCalls} />
       </div>
     </main>
   );
