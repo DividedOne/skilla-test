@@ -1,15 +1,15 @@
 import { useState, type FC, type Dispatch, type SetStateAction } from "react";
 import { ArrowUp } from "../icons/ArrowUp";
-import type { CallFilter } from "../../App";
+import type { CallFilter, QParams } from "../../utils/types";
 
 type CallTypeSelectProps = {
   currentFilter: CallFilter | null;
-  setCurrentFilter: Dispatch<SetStateAction<CallFilter | null>>;
+  setQParams: Dispatch<SetStateAction<QParams>>;
 };
 
 export const CallTypeSelect: FC<CallTypeSelectProps> = ({
   currentFilter,
-  setCurrentFilter,
+  setQParams,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -32,7 +32,10 @@ export const CallTypeSelect: FC<CallTypeSelectProps> = ({
           <button
             className="w-full px-3 py-[7px] text-left text-xs/[18px] text-muted transition-colors duration-150 hover:bg-hover focus-visible:bg-hover"
             onClick={() => {
-              setCurrentFilter(null);
+              setQParams((prevState) => ({
+                ...prevState,
+                currentFilter: null,
+              }));
               setIsOpen(false);
             }}
           >
@@ -41,7 +44,11 @@ export const CallTypeSelect: FC<CallTypeSelectProps> = ({
           <button
             className="w-full px-3 py-[7px] text-left text-xs/[18px] text-muted transition-colors duration-150 hover:bg-hover focus-visible:bg-hover"
             onClick={() => {
-              setCurrentFilter("Входящие");
+              setQParams((prevState) => ({
+                ...prevState,
+                currentFilter: "Входящие",
+              }));
+
               setIsOpen(false);
             }}
           >
@@ -50,7 +57,10 @@ export const CallTypeSelect: FC<CallTypeSelectProps> = ({
           <button
             className="w-full px-3 py-[7px] text-left text-xs/[18px] text-muted transition-colors duration-150 hover:bg-hover focus-visible:bg-hover"
             onClick={() => {
-              setCurrentFilter("Исходящие");
+              setQParams((prevState) => ({
+                ...prevState,
+                currentFilter: "Исходящие",
+              }));
               setIsOpen(false);
             }}
           >

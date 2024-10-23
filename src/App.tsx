@@ -7,74 +7,27 @@ import type { ApiResponse, Calls } from "./data/types";
 import {
   appendMark,
   formatPhoneNumber,
-  getFilteredCalls,
+  getDatesQParams,
+  getFilterQParams,
   getHoursAndMinutes,
   getTimeFromSeconds,
 } from "./utils/helpers";
-import { startOfMonth, startOfWeek, startOfYear, subDays } from "date-fns";
-
-export type CallFilter = "Входящие" | "Исходящие" | null;
-
-export type Dates = { startDate: string; endDate: string };
-
-type Period = "3 дня" | "Неделя" | "Месяц" | "Год";
-
-function getDates(period: Period): Dates {
-  const endDate = new Date();
-  let startDate: Date;
-
-  switch (period) {
-    case "Неделя":
-      startDate = startOfWeek(endDate, { weekStartsOn: 1 });
-      break;
-    case "Месяц":
-      startDate = startOfMonth(endDate);
-      break;
-    case "Год":
-      startDate = startOfYear(endDate);
-      break;
-    default: {
-      startDate = subDays(endDate, 2);
-    }
-  }
-
-  const correctStartMonth =
-    startDate.getMonth() + 1 < 10
-      ? `0${startDate.getMonth() + 1}`
-      : `${startDate.getMonth() + 1}`;
-
-  const correctEndMonth =
-    endDate.getMonth() + 1 < 10
-      ? `0${endDate.getMonth() + 1}`
-      : `${endDate.getMonth() + 1}`;
-
-  const correctEndDay =
-    endDate.getDate() < 10 ? `0${endDate.getDate()}` : `${endDate.getDate()}`;
-  const correctStartDay =
-    startDate.getDate() < 10
-      ? `0${startDate.getDate()}`
-      : `${startDate.getDate()}`;
-
-  const startDateString = `${startDate.getFullYear()}-${correctStartMonth}-${correctStartDay}`;
-  const endDateString = `${endDate.getFullYear()}-${correctEndMonth}-${correctEndDay}`;
-
-  return {
-    startDate: startDateString,
-    endDate: endDateString,
-  };
-}
+import type { QParams } from "./utils/types";
 
 function App() {
   const [calls, setCalls] = useState<Calls>();
-  const [currentFilter, setCurrentFilter] = useState<CallFilter | null>(null);
-  const [period, setPeriod] = useState<Period>("3 дня");
+  const [qParams, setQParams] = useState<QParams>({
+    currentFilter: null,
+    period: "3 дня",
+  });
 
   useEffect(() => {
-    const { startDate, endDate } = getDates(period);
+    const { startDate, endDate } = getDatesQParams(qParams.period);
+    const filter = getFilterQParams(qParams.currentFilter);
 
     async function fetchCalls() {
       const apiResponse = await fetch(
-        `${API_URL}?date_start=${startDate}&date_end=${endDate}`,
+        `${API_URL}?${startDate}&${endDate}${filter}`,
         {
           method: "POST",
           headers: {
@@ -99,24 +52,22 @@ function App() {
       }));
       setCalls(calls);
     });
-  }, []);
-
-  const filteredCalls = getFilteredCalls(calls, currentFilter);
+  }, [qParams]);
 
   return (
     <main className="flex min-h-screen flex-col gap-[16px] bg-[#F1F4F9] px-60 pb-[120px] pt-20 font-sf">
       <div className="flex justify-between">
         <div>
           <CallTypeSelect
-            currentFilter={currentFilter}
-            setCurrentFilter={setCurrentFilter}
+            currentFilter={qParams.currentFilter}
+            setQParams={setQParams}
           />
         </div>
-        <DateSelect />
+        <DateSelect period={qParams.period} setQParams={setQParams} />
       </div>
       <Suspense fallback={<div>Loading...</div>}>
         <div className="h-full w-full rounded-lg bg-white shadow-default">
-          {filteredCalls && <CallsTable calls={filteredCalls} />}
+          {calls && <CallsTable calls={calls} />}
         </div>
       </Suspense>
     </main>

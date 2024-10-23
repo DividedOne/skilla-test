@@ -1,5 +1,5 @@
-import type { CallFilter } from "../App";
-import type { Calls } from "../data/types";
+import { startOfMonth, startOfWeek, startOfYear, subDays } from "date-fns";
+import type { CallFilter, Period } from "./types";
 
 export function getHoursAndMinutes(date: string) {
   const dateObject = new Date(date);
@@ -37,16 +37,57 @@ export function appendMark() {
   return marks[Math.floor(Math.random() * marks.length)];
 }
 
-export function getFilteredCalls(
-  calls: Calls | undefined,
-  filter: CallFilter | null,
-) {
-  if (!calls) return;
+export function getDatesQParams(period: Period) {
+  const endDate = new Date();
+  let startDate: Date;
 
-  if (!filter) return calls;
+  switch (period) {
+    case "Неделя":
+      startDate = startOfWeek(endDate, { weekStartsOn: 1 });
+      break;
+    case "Месяц":
+      startDate = startOfMonth(endDate);
+      break;
+    case "Год":
+      startDate = startOfYear(endDate);
+      break;
+    default: {
+      startDate = subDays(endDate, 2);
+    }
+  }
 
-  if (filter === "Входящие")
-    return calls.filter((call) => call.callInOut === "in");
+  const correctStartMonth =
+    startDate.getMonth() + 1 < 10
+      ? `0${startDate.getMonth() + 1}`
+      : `${startDate.getMonth() + 1}`;
 
-  return calls.filter((call) => call.callInOut === "out");
+  const correctEndMonth =
+    endDate.getMonth() + 1 < 10
+      ? `0${endDate.getMonth() + 1}`
+      : `${endDate.getMonth() + 1}`;
+
+  const correctEndDay =
+    endDate.getDate() < 10 ? `0${endDate.getDate()}` : `${endDate.getDate()}`;
+  const correctStartDay =
+    startDate.getDate() < 10
+      ? `0${startDate.getDate()}`
+      : `${startDate.getDate()}`;
+
+  const startDateString = `date_start=${startDate.getFullYear()}-${correctStartMonth}-${correctStartDay}`;
+  const endDateString = `date_end=${endDate.getFullYear()}-${correctEndMonth}-${correctEndDay}`;
+
+  return {
+    startDate: startDateString,
+    endDate: endDateString,
+  };
+}
+
+export function getFilterQParams(filter: CallFilter) {
+  if (!filter) {
+    return "";
+  }
+
+  const convertedFilter = filter === "Входящие" ? "1" : "0";
+
+  return `&in_out=${convertedFilter}`;
 }

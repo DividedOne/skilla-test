@@ -1,8 +1,12 @@
-import { useState, type FC } from "react";
+import { type Dispatch, type SetStateAction, useState, type FC } from "react";
 import { ArrowUp } from "../icons/ArrowUp";
 import { Calendar } from "../icons/Calendar";
+import type { Period, QParams } from "../../utils/types";
 
-type DateSelectProps = {};
+type DateSelectProps = {
+  period: Period;
+  setQParams: Dispatch<SetStateAction<QParams>>;
+};
 
 export const DateSelect: FC<DateSelectProps> = ({}) => {
   const [isOpen, setIsOpen] = useState(false);
