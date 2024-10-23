@@ -49,6 +49,7 @@ function App() {
         source: call.source ?? "",
         mark: appendMark(),
         duration: getTimeFromSeconds(call.time),
+        recordId: call.record,
       }));
       setCalls(calls);
     });

@@ -8,6 +8,7 @@ export type Calls = {
   source: string;
   mark: string;
   duration: string;
+  recordId: string;
 }[];
 
 export type CallInOut = "in" | "out";

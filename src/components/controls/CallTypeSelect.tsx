@@ -1,6 +1,7 @@
-import { useState, type FC, type Dispatch, type SetStateAction } from "react";
+import { type FC, type Dispatch, type SetStateAction } from "react";
 import { ArrowUp } from "../icons/ArrowUp";
 import type { CallFilter, QParams } from "../../utils/types";
+import { useHandleClickOutside } from "../../utils/hooks/useHandleClickOutside";
 
 type CallTypeSelectProps = {
   currentFilter: CallFilter | null;
@@ -11,23 +12,24 @@ export const CallTypeSelect: FC<CallTypeSelectProps> = ({
   currentFilter,
   setQParams,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const { ref, isVisible, setIsVisible } = useHandleClickOutside(false);
 
   return (
     <div
       role="button"
-      onClick={() => setIsOpen(!isOpen)}
+      ref={ref}
+      onClick={() => setIsVisible(!isVisible)}
       className="relative inline-flex min-w-[130px] items-center gap-1 rounded-lg bg-transparent text-sm/[14px] text-secondary"
     >
       {currentFilter ? currentFilter : "Все типы"}
       <div
-        className={`${isOpen ? "" : "rotate-180"} transition-all duration-150`}
+        className={`${isVisible ? "" : "rotate-180"} transition-all duration-150`}
       >
         <ArrowUp
-          className={`${isOpen ? "fill-[#002CFB]" : "fill-[#ADBFDF]"}`}
+          className={`${isVisible ? "fill-[#002CFB]" : "fill-[#ADBFDF]"}`}
         />
       </div>
-      {isOpen && (
+      {isVisible && (
         <div className="absolute left-0 top-[calc(100%+12px)] rounded-lg bg-white shadow-dropdown">
           <button
             className="w-full px-3 py-[7px] text-left text-xs/[18px] text-muted transition-colors duration-150 hover:bg-hover focus-visible:bg-hover"
@@ -36,7 +38,7 @@ export const CallTypeSelect: FC<CallTypeSelectProps> = ({
                 ...prevState,
                 currentFilter: null,
               }));
-              setIsOpen(false);
+              setIsVisible(false);
             }}
           >
             Все типы
@@ -49,7 +51,7 @@ export const CallTypeSelect: FC<CallTypeSelectProps> = ({
                 currentFilter: "Входящие",
               }));
 
-              setIsOpen(false);
+              setIsVisible(false);
             }}
           >
             Входящие
@@ -61,7 +63,7 @@ export const CallTypeSelect: FC<CallTypeSelectProps> = ({
                 ...prevState,
                 currentFilter: "Исходящие",
               }));
-              setIsOpen(false);
+              setIsVisible(false);
             }}
           >
             Исходящие

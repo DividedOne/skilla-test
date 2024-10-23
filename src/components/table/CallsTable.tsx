@@ -1,8 +1,9 @@
 import { type FC } from "react";
 import { tableHeadings } from "./constants";
 import { CallTypeIcon } from "../icons/CallTypeIcon";
-import { Calls } from "../../App";
 import { CallMarkBadge } from "./CallMarkBadge";
+import type { Calls } from "../../data/types";
+import { RecordPlayer } from "./RecordPlayer";
 
 type CallsTableProps = {
   calls: Calls;
@@ -12,7 +13,7 @@ export const CallsTable: FC<CallsTableProps> = ({ calls }) => {
   return (
     <div>
       {/* headings */}
-      <div className="grid-cols-table ml-10 grid items-center gap-1 border-b border-[#EAF0FA] pb-[21px] pr-10 pt-[24px] text-sm text-secondary/[87%]">
+      <div className="table-divisor grid grid-cols-table items-center gap-1 px-10 pb-[22px] pt-[24px] text-sm text-secondary/[87%]">
         {tableHeadings.map((heading) => (
           <div key={heading} className="last:text-right">
             {heading}
@@ -23,7 +24,7 @@ export const CallsTable: FC<CallsTableProps> = ({ calls }) => {
       {calls.map((call) => (
         <div
           key={call.id}
-          className="grid-cols-table xl ml-10 grid items-center gap-1 border-b border-[#EAF0FA] py-4 pr-10 text-sm font-normal last:border-b-0 hover:cursor-pointer hover:bg-[#F1F4F9]"
+          className={`${call.recordId ? "py-[10px]" : "py-[16px]"} table-divisor grid min-h-[65px] grid-cols-table items-center gap-[5px] px-10 text-sm font-normal last:border-b-0 hover:cursor-pointer hover:bg-[#F1F4F9]`}
         >
           <div className="pl-1">
             <CallTypeIcon callInOut={call.callInOut} callStatus={call.status} />
@@ -39,9 +40,13 @@ export const CallsTable: FC<CallsTableProps> = ({ calls }) => {
           <div>
             <CallMarkBadge mark={call.mark} />
           </div>
-          <div className="text-right text-[15px]/[21px] text-primary">
-            {call.duration}
-          </div>
+          {call.recordId ? (
+            <RecordPlayer recordId={call.recordId} duration={call.duration} />
+          ) : (
+            <div className="text-right text-[15px]/[21px] text-primary">
+              {call.duration}
+            </div>
+          )}
         </div>
       ))}
     </div>

@@ -9,6 +9,7 @@ export default {
       boxShadow: {
         default: "0 4px 5px #E9EDF3",
         dropdown: "0 4px 20px #00000014",
+        "date-select": "0 0 26px #E9EDF3CC",
       },
       colors: {
         accent: "#002CFB",
