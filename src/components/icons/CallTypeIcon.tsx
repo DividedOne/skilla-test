@@ -1,5 +1,5 @@
 import { type FC } from "react";
-import type { CallInOut, CallStatus } from "../../App";
+import type { CallInOut, CallStatus } from "../../data/types";
 
 type CallTypeIconProps = {
   callInOut: CallInOut;
