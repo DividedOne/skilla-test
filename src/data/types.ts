@@ -1,15 +1,18 @@
 export type Calls = {
-  id: number;
-  callInOut: CallInOut;
-  status: CallStatus;
-  date: string;
-  userAvatar: string;
-  number: string;
-  source: string;
-  mark: string;
-  duration: string;
-  recordId: string;
-}[];
+  [callDate: string]: {
+    callInOut: CallInOut;
+    status: CallStatus;
+    date: string;
+    userAvatar: string;
+    number: string;
+    source: string;
+    mark: string;
+    duration: number;
+    recordId: string;
+    partnershipId: string;
+    id: number;
+  }[];
+};
 
 export type CallInOut = "in" | "out";
 

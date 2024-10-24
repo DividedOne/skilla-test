@@ -10,7 +10,6 @@ import {
   getDatesQParams,
   getFilterQParams,
   getHoursAndMinutes,
-  getTimeFromSeconds,
 } from "./utils/helpers";
 import type { QParams } from "./utils/types";
 
@@ -27,7 +26,7 @@ function App() {
 
     async function fetchCalls() {
       const apiResponse = await fetch(
-        `${API_URL}?${startDate}&${endDate}${filter}`,
+        `${API_URL}?${startDate}&${endDate}${filter}&limit=150`,
         {
           method: "POST",
           headers: {
@@ -39,18 +38,27 @@ function App() {
       return data as ApiResponse;
     }
     fetchCalls().then((data) => {
-      const calls: Calls = data.results.map((call) => ({
-        id: call.id,
-        callInOut: call.in_out === 1 ? "in" : "out",
-        status: call.status === "Дозвонился" ? "answered" : "missed",
-        date: getHoursAndMinutes(call.date),
-        userAvatar: call.person_avatar,
-        number: formatPhoneNumber(call.partner_data.phone),
-        source: call.source ?? "",
-        mark: appendMark(),
-        duration: getTimeFromSeconds(call.time),
-        recordId: call.record,
-      }));
+      const calls = data.results.reduce<Calls>((acc, call) => {
+        acc[call.date_notime] = [
+          ...(acc[call.date_notime] || []),
+          {
+            id: call.id,
+            callInOut: call.in_out === 1 ? "in" : "out",
+            status: call.status === "Дозвонился" ? "answered" : "missed",
+            date: getHoursAndMinutes(call.date),
+            userAvatar: call.person_avatar,
+            number: formatPhoneNumber(call.partner_data.phone),
+            source: call.source ?? "",
+            mark: appendMark(),
+            duration: call.time,
+            recordId: call.record,
+            partnershipId: call.partnership_id,
+          },
+        ];
+
+        return acc;
+      }, {});
+
       setCalls(calls);
     });
   }, [qParams]);
