@@ -18,6 +18,8 @@ function App() {
   const [qParams, setQParams] = useState<QParams>({
     currentFilter: null,
     period: "3 дня",
+    sortBy: "date",
+    order: "DESC",
   });
 
   useEffect(() => {
@@ -26,7 +28,7 @@ function App() {
 
     async function fetchCalls() {
       const apiResponse = await fetch(
-        `${API_URL}?${startDate}&${endDate}${filter}&limit=150`,
+        `${API_URL}?${startDate}&${endDate}${filter}&sort_by=${qParams.sortBy}&order=${qParams.order}&limit=150`,
         {
           method: "POST",
           headers: {
@@ -76,7 +78,14 @@ function App() {
       </div>
       <Suspense fallback={<div>Loading...</div>}>
         <div className="h-full w-full rounded-lg bg-white shadow-default">
-          {calls && <CallsTable calls={calls} />}
+          {calls && (
+            <CallsTable
+              calls={calls}
+              sortBy={qParams.sortBy}
+              order={qParams.order}
+              setQParams={setQParams}
+            />
+          )}
         </div>
       </Suspense>
     </main>

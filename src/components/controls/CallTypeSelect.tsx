@@ -30,7 +30,7 @@ export const CallTypeSelect: FC<CallTypeSelectProps> = ({
         />
       </div>
       {isVisible && (
-        <div className="absolute left-0 top-[calc(100%+12px)] rounded-lg bg-white shadow-dropdown">
+        <div className="absolute left-0 top-[calc(100%+12px)] isolate z-10 rounded-lg bg-white shadow-dropdown">
           <button
             className="w-full px-3 py-[7px] text-left text-xs/[18px] text-muted transition-colors duration-150 hover:bg-hover focus-visible:bg-hover"
             onClick={() => {

@@ -1,26 +1,74 @@
-import { type FC } from "react";
-import { tableHeadings } from "./constants";
+import { Dispatch, SetStateAction, type FC } from "react";
 import { CallTypeIcon } from "../icons/CallTypeIcon";
 import { CallMarkBadge } from "./CallMarkBadge";
 import type { Calls } from "../../data/types";
 import { RecordPlayer } from "./RecordPlayer";
 import { getTimeFromSeconds } from "../../utils/helpers";
 import { DateHeading } from "./DateHeading";
+import { ArrowDown } from "../icons/ArrowDown";
+import type { Order, QParams, SortBy } from "../../utils/types";
 
 type CallsTableProps = {
   calls: Calls;
+  sortBy: SortBy;
+  order: Order;
+  setQParams: Dispatch<SetStateAction<QParams>>;
 };
 
-export const CallsTable: FC<CallsTableProps> = ({ calls }) => {
+export const CallsTable: FC<CallsTableProps> = ({
+  calls,
+  sortBy,
+  order,
+  setQParams,
+}) => {
+  const handleFilterChange = (
+    currentSortBy: SortBy,
+    newSortBy: SortBy,
+    order: Order,
+  ) => {
+    const newOrder: Order =
+      currentSortBy === newSortBy ? (order === "ASC" ? "DESC" : "ASC") : order;
+
+    setQParams((prev) => {
+      return {
+        ...prev,
+        sortBy: newSortBy,
+        order: newOrder,
+      };
+    });
+  };
+
   return (
     <div>
       {/* headings */}
       <div className="table-divisor grid grid-cols-table items-center gap-1 px-10 pb-[22px] pt-[24px] text-sm text-secondary/[87%]">
-        {tableHeadings.map((heading) => (
-          <div key={heading} className="last:text-right">
-            {heading}
-          </div>
-        ))}
+        <div>Тип</div>
+        <button
+          onClick={() => handleFilterChange(sortBy, "date", order)}
+          className="relative inline-flex"
+        >
+          <span>Время</span>
+          <span
+            className={`${order === "ASC" && sortBy === "date" && "rotate-180"} absolute right-6 top-1/2 -translate-y-1/2 transition-transform duration-150`}
+          >
+            <ArrowDown className="fill-[#ADBFDF]" />
+          </span>
+        </button>
+        <div>Сотрудник</div>
+        <div>Звонок</div>
+        <div>Источник</div>
+        <div>Оценка</div>
+        <button
+          onClick={() => handleFilterChange(sortBy, "duration", order)}
+          className="relative inline-flex justify-end"
+        >
+          <span>Длительность</span>
+          <span
+            className={`${order === "ASC" && sortBy === "duration" && "rotate-180"} absolute -right-5 top-1/2 -translate-y-1/2 transition-transform duration-150`}
+          >
+            <ArrowDown className="fill-[#ADBFDF]" />
+          </span>
+        </button>
       </div>
       {/* rows */}
       {Object.entries(calls).map(([callDate, calls]) => (

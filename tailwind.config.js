@@ -24,7 +24,7 @@ export default {
         "accent-red": "#EA1A4F",
       },
       gridTemplateColumns: {
-        table: "50px, 84px, 125px, 2fr, 1fr, 1fr, 2fr",
+        table: "50px, 84px, 125px, 1.8fr, 1.2fr, 1fr, 2fr",
       },
     },
   },
