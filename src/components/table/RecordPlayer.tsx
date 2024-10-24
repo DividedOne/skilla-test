@@ -6,6 +6,7 @@ import { RecordProgress } from "./RecordProgress";
 import { getTimeFromSeconds } from "../../utils/helpers";
 import { Play } from "../icons/Play";
 import { Pause } from "../icons/Pause";
+import { ArrowUp } from "../icons/ArrowUp";
 
 type RecordPlayerProps = {
   recordId: string;
@@ -18,6 +19,7 @@ export const RecordPlayer: FC<RecordPlayerProps> = ({
   duration,
   partnershipId,
 }) => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [shouldDownload, setShouldDownload] = useState(false);
   const [audioRecordURI, setAudioRecordURI] = useState<string>();
   const [isPlaying, setIsPlaying] = useState(false);
@@ -73,30 +75,46 @@ export const RecordPlayer: FC<RecordPlayerProps> = ({
           {getTimeFromSeconds(duration)}
         </div>
         {/* play */}
-        <button
-          disabled={!audioRecordURI}
-          onClick={handleIsPlayingChange}
-          className="group relative ml-3 mr-2 inline-flex size-6 rounded-full bg-white disabled:cursor-not-allowed"
-        >
-          {isPlaying ? (
-            <Pause className="fill-accent group-disabled:fill-accent/40" />
-          ) : (
-            <Play className="fill-accent group-disabled:fill-accent/40" />
-          )}
-        </button>
-        <RecordProgress duration={duration} isPlaying={isPlaying} />
-        <button
-          disabled={!!audioRecordURI}
-          onClick={() => setShouldDownload(true)}
-          className="group mx-2 inline-flex size-6 items-center justify-center disabled:cursor-not-allowed"
-        >
-          <DownloadIcon className="fill-[#ADBFDF] transition-colors duration-150 group-hover:fill-accent group-focus-visible:fill-accent group-disabled:fill-accent/40" />
-        </button>
-        <button className="group inline-flex size-6 items-center justify-center">
-          {!!audioRecordURI && (
-            <XIcon className="fill-[#ADBFDF] transition-colors duration-150 group-hover:fill-accent group-focus-visible:fill-accent" />
-          )}
-        </button>
+        {isCollapsed ? (
+          <button
+            onClick={() => setIsCollapsed(false)}
+            className="group inline-flex size-6 -rotate-90 items-center justify-center"
+          >
+            <ArrowUp className="fill-[#ADBFDF] transition-colors duration-150 group-hover:fill-accent group-focus-visible:fill-accent" />
+          </button>
+        ) : (
+          <>
+            <button
+              disabled={!audioRecordURI}
+              onClick={handleIsPlayingChange}
+              className="group relative ml-3 mr-2 inline-flex size-6 rounded-full bg-white disabled:cursor-not-allowed"
+            >
+              {isPlaying ? (
+                <Pause className="fill-accent group-disabled:fill-accent/40" />
+              ) : (
+                <Play className="fill-accent group-disabled:fill-accent/40" />
+              )}
+            </button>
+            <RecordProgress duration={duration} isPlaying={isPlaying} />
+            <button
+              disabled={!!audioRecordURI}
+              onClick={() => setShouldDownload(true)}
+              className="group mx-2 inline-flex size-6 items-center justify-center disabled:cursor-not-allowed"
+            >
+              <DownloadIcon className="fill-[#ADBFDF] transition-colors duration-150 group-hover:fill-accent group-focus-visible:fill-accent group-disabled:fill-accent/40" />
+            </button>
+            <button
+              onClick={() => {
+                if (playerRef.current) playerRef.current.pause();
+                setIsPlaying(false);
+                setIsCollapsed(true);
+              }}
+              className="group inline-flex size-6 items-center justify-center"
+            >
+              <XIcon className="fill-[#ADBFDF] transition-colors duration-150 group-hover:fill-accent group-focus-visible:fill-accent" />
+            </button>
+          </>
+        )}
       </div>
       {!!audioRecordURI && <audio ref={playerRef} src={audioRecordURI} />}
     </div>

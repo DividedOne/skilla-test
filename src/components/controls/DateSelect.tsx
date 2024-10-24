@@ -28,7 +28,18 @@ export const DateSelect: FC<DateSelectProps> = ({
   const periodsWithoutCurrent = possiblePeriods.filter((p) => p !== period);
 
   const handleNextPeriod = () => {
+    if (manualStartDate && manualEndDate) {
+      setQParams((prevState) => ({
+        ...prevState,
+        period: possiblePeriods[0],
+        manualStartDate: null,
+        manualEndDate: null,
+      }));
+      return;
+    }
+
     const index = possiblePeriods.indexOf(period);
+
     if (index === possiblePeriods.length - 1) {
       setQParams((prevState) => ({
         ...prevState,
@@ -43,7 +54,18 @@ export const DateSelect: FC<DateSelectProps> = ({
   };
 
   const handlePrevPeriod = () => {
+    if (manualStartDate && manualEndDate) {
+      setQParams((prevState) => ({
+        ...prevState,
+        period: possiblePeriods[0],
+        manualStartDate: null,
+        manualEndDate: null,
+      }));
+      return;
+    }
+
     const index = possiblePeriods.indexOf(period);
+
     if (index === 0) {
       setQParams((prevState) => ({
         ...prevState,
@@ -95,23 +117,43 @@ export const DateSelect: FC<DateSelectProps> = ({
                 <span>{period}</span>
               )}
             </button>
-            {periodsWithoutCurrent.map((period) => (
-              <button
-                key={period}
-                onClick={() => {
-                  setQParams((prevState) => ({
-                    ...prevState,
-                    period,
-                    manualStartDate: null,
-                    manualEndDate: null,
-                  }));
-                  setIsVisible(false);
-                }}
-                className="inline-flex w-full px-[21px] py-2 text-tertiary hover:bg-[#002CFB]/[13%] hover:text-primary"
-              >
-                {period}
-              </button>
-            ))}
+            {manualStartDate &&
+              manualEndDate &&
+              possiblePeriods.map((period) => (
+                <button
+                  key={period}
+                  onClick={() => {
+                    setQParams((prevState) => ({
+                      ...prevState,
+                      period,
+                      manualStartDate: null,
+                      manualEndDate: null,
+                    }));
+                    setIsVisible(false);
+                  }}
+                  className="inline-flex w-full px-[21px] py-2 text-tertiary hover:bg-[#002CFB]/[13%] hover:text-primary"
+                >
+                  {period}
+                </button>
+              ))}
+            {!(manualStartDate && manualEndDate) &&
+              periodsWithoutCurrent.map((period) => (
+                <button
+                  key={period}
+                  onClick={() => {
+                    setQParams((prevState) => ({
+                      ...prevState,
+                      period,
+                      manualStartDate: null,
+                      manualEndDate: null,
+                    }));
+                    setIsVisible(false);
+                  }}
+                  className="inline-flex w-full px-[21px] py-2 text-tertiary hover:bg-[#002CFB]/[13%] hover:text-primary"
+                >
+                  {period}
+                </button>
+              ))}
             <div
               onClick={(e) => e.stopPropagation()}
               className="inline-flex items-center justify-center gap-px px-[21px] py-2 text-tertiary hover:bg-[#002CFB]/[13%] hover:text-primary"
