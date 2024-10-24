@@ -11,4 +11,6 @@ export type QParams = {
   period: Period;
   sortBy: SortBy;
   order: Order;
+  manualStartDate: string | null;
+  manualEndDate: string | null;
 };

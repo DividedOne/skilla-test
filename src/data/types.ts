@@ -5,6 +5,8 @@ export type Calls = {
     date: string;
     userAvatar: string;
     number: string;
+    name: string;
+    company: string;
     source: string;
     mark: string;
     duration: number;

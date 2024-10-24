@@ -94,9 +94,24 @@ export const CallsTable: FC<CallsTableProps> = ({
                 alt="avatar"
                 className="size-8 rounded-full"
               />
-              <div className="text-[15px]/[21px] text-primary">
-                {call.number}
-              </div>
+              {call.company && call.name && (
+                <div className="flex flex-col text-[15px]/[21px] text-primary">
+                  <span>{call.name}</span>
+                  <span className="text-secondary">{call.company}</span>
+                </div>
+              )}
+
+              {call.name && (
+                <div className="flex flex-col text-[15px]/[21px] text-primary">
+                  <span>{call.name}</span>
+                  <span className="text-secondary">{call.number}</span>
+                </div>
+              )}
+              {!(call.company && call.name) && (
+                <div className="text-[15px]/[21px] text-primary">
+                  {call.number}
+                </div>
+              )}
               <div className="text-[15px]/[21px] text-secondary">
                 {call.source}
               </div>

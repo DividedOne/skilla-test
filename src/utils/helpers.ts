@@ -25,10 +25,17 @@ export function getTimeFromSeconds(seconds: number) {
 }
 
 export function formatPhoneNumber(phoneNumber: string) {
-  if (phoneNumber.length !== 11) return phoneNumber;
+  const isCensored = phoneNumber.length !== 11;
 
   const digits = phoneNumber.split("");
-  return `+${digits[0]} (${digits[1]}${digits[2]}${digits[3]}) ${digits[4]}${digits[5]}${digits[6]}-${digits[7]}${digits[8]}-${digits[9]}${digits[10]}`;
+
+  if (!isCensored) {
+    if (phoneNumber.length !== 11) return phoneNumber;
+    return `+${digits[0]} (${digits[1]}${digits[2]}${digits[3]}) ${digits[4]}${digits[5]}${digits[6]}-${digits[7]}${digits[8]}-${digits[9]}${digits[10]}`;
+  }
+
+  if (phoneNumber.length !== 9) return phoneNumber;
+  return `+${digits[0]} (${digits[1]}${digits[2]}${digits[3]}) ${digits[4]}${digits[5]}${digits[6]}-${digits[7]}${digits[8]}`;
 }
 
 export function appendMark() {
@@ -37,22 +44,40 @@ export function appendMark() {
   return marks[Math.floor(Math.random() * marks.length)];
 }
 
-export function getDatesQParams(period: Period) {
-  const endDate = new Date();
+export function appendSource(source: string) {
+  if (source !== "") return source;
+
+  const sources = ["", "Google", "Яндекс", "Rabota.ru", "Санкт-Петербург"];
+
+  return sources[Math.floor(Math.random() * sources.length)];
+}
+
+export function getDatesQParams(
+  period: Period,
+  manualEndDate: string | null,
+  manualStartDate: string | null,
+) {
+  let endDate: Date;
   let startDate: Date;
 
-  switch (period) {
-    case "Неделя":
-      startDate = startOfWeek(endDate, { weekStartsOn: 1 });
-      break;
-    case "Месяц":
-      startDate = startOfMonth(endDate);
-      break;
-    case "Год":
-      startDate = startOfYear(endDate);
-      break;
-    default: {
-      startDate = subDays(endDate, 2);
+  if (manualStartDate && manualEndDate) {
+    startDate = new Date(manualStartDate);
+    endDate = new Date(manualEndDate);
+  } else {
+    endDate = new Date();
+    switch (period) {
+      case "Неделя":
+        startDate = startOfWeek(endDate, { weekStartsOn: 1 });
+        break;
+      case "Месяц":
+        startDate = startOfMonth(endDate);
+        break;
+      case "Год":
+        startDate = startOfYear(endDate);
+        break;
+      default: {
+        startDate = subDays(endDate, 2);
+      }
     }
   }
 

@@ -6,6 +6,7 @@ import { API_URL, token } from "./data/constants";
 import type { ApiResponse, Calls } from "./data/types";
 import {
   appendMark,
+  appendSource,
   formatPhoneNumber,
   getDatesQParams,
   getFilterQParams,
@@ -20,10 +21,16 @@ function App() {
     period: "3 дня",
     sortBy: "date",
     order: "DESC",
+    manualStartDate: null,
+    manualEndDate: null,
   });
 
   useEffect(() => {
-    const { startDate, endDate } = getDatesQParams(qParams.period);
+    const { startDate, endDate } = getDatesQParams(
+      qParams.period,
+      qParams.manualStartDate,
+      qParams.manualEndDate,
+    );
     const filter = getFilterQParams(qParams.currentFilter);
 
     async function fetchCalls() {
@@ -49,8 +56,12 @@ function App() {
             status: call.status === "Дозвонился" ? "answered" : "missed",
             date: getHoursAndMinutes(call.date),
             userAvatar: call.person_avatar,
-            number: formatPhoneNumber(call.partner_data.phone),
-            source: call.source ?? "",
+            number: formatPhoneNumber(
+              call.in_out === 1 ? call.from_number : call.to_number,
+            ),
+            name: "",
+            company: "",
+            source: appendSource(call.source),
             mark: appendMark(),
             duration: call.time,
             recordId: call.record,
@@ -74,7 +85,12 @@ function App() {
             setQParams={setQParams}
           />
         </div>
-        <DateSelect period={qParams.period} setQParams={setQParams} />
+        <DateSelect
+          manualStartDate={qParams.manualStartDate}
+          manualEndDate={qParams.manualEndDate}
+          period={qParams.period}
+          setQParams={setQParams}
+        />
       </div>
       <Suspense fallback={<div>Loading...</div>}>
         <div className="h-full w-full rounded-lg bg-white shadow-default">
