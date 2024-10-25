@@ -156,8 +156,9 @@ export const DateSelect: FC<DateSelectProps> = ({
               ))}
             <div
               onClick={(e) => e.stopPropagation()}
-              className="inline-flex items-center justify-center gap-px px-[21px] py-2 text-tertiary hover:bg-[#002CFB]/[13%] hover:text-primary"
+              className="inline-flex flex-col justify-center gap-px px-[21px] py-2 text-tertiary hover:bg-[#002CFB]/[13%] hover:text-primary"
             >
+              <span className="text-left text-primary">Указать даты</span>
               <RangePicker
                 className="border-none focus-visible:outline-none"
                 placeholder={["", ""]}
